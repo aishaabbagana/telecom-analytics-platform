@@ -1,6 +1,6 @@
 # Telecom Analytics Platform
 
-A full-stack dashboard for analyzing Call Detail Records (CDR). Built with React, Express, and MongoDB.
+A full-stack application for visualizing telecom Call Data Records (CDR). Built with React, Express, and MongoDB.
 
 ## Live Demo
 
