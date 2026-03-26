@@ -9,13 +9,10 @@ function CallLogsTable({ filters }) {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [filteredRecords, setFilteredRecords] = useState([]);
 
   const limit = 10;
-
-  useEffect(() => {
-    setPage(1);
-  }, [filters]);
 
   useEffect(() => {
     async function fetchData() {
@@ -30,12 +27,13 @@ function CallLogsTable({ filters }) {
           pages = Math.ceil(allRecords.length / limit);
           data = allRecords.slice((page - 1) * limit, page * limit);
         } else {
-          const response = await getCdrs(page, limit);
+          const response = await getCdrs(page, limit, searchTerm);
           data = response.data || response;
           pages = response.totalPages || Math.ceil((response.total || data.length) / limit);
         }
 
         setRecords(data);
+        setFilteredRecords(data);
         setTotalPages(pages);
         setLoading(false);
       } catch (error) {
@@ -43,24 +41,9 @@ function CallLogsTable({ filters }) {
         setLoading(false);
       }
     }
+
     fetchData();
-  }, [page, filters]);
-
-  useEffect(() => {
-    if (!search) {
-      setFilteredRecords(records);
-      return;
-    }
-
-    const term = search.toLowerCase();
-    const filtered = records.filter((record) =>
-      record.callerName?.toLowerCase().includes(term) ||
-      record.callerNumber?.toLowerCase().includes(term) ||
-      record.receiverNumber?.toLowerCase().includes(term) ||
-      record.city?.toLowerCase().includes(term)
-    );
-    setFilteredRecords(filtered);
-  }, [search, records]);
+  }, [page, filters, searchTerm]);
 
   function formatTime(dateString) {
     const date = new Date(dateString);
@@ -91,6 +74,7 @@ function CallLogsTable({ filters }) {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") { setSearchTerm(search); setPage(1); } }}
               placeholder="Search calls..."
               className="pl-8 pr-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-xs focus:outline-none focus:border-purple-500 transition-colors w-48"
             />

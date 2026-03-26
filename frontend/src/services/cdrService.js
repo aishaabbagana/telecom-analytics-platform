@@ -1,7 +1,7 @@
 import api from "./api";
 
-export async function getCdrs(page = 1, limit = 10) {
-  const response = await api.get(`/cdrs?page=${page}&limit=${limit}`);
+export async function getCdrs(page = 1, limit = 10, search = "") {
+  const response = await api.get(`/cdrs?page=${page}&limit=${limit}&search=${search}`);
   return response.data;
 }
 

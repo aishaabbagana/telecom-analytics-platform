@@ -11,9 +11,23 @@ router.get("/", async(req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 25;
         const skip = (page - 1) * limit;
+        const search = req.query.search || "";
 
-        const cdrs = await Cdr.find().skip(skip).limit(limit);
-        const total = await Cdr.countDocuments();
+        let query = {};
+        if (search) {
+            const regex = new RegExp(search, "i");
+            query = {
+                $or: [
+                    { callerName: regex },
+                    { callerNumber: regex },
+                    { receiverNumber: regex },
+                    { city: regex }
+                ]
+            };
+        }
+
+        const cdrs = await Cdr.find(query).skip(skip).limit(limit);
+        const total = await Cdr.countDocuments(query);
 
         res.json({
             total,
