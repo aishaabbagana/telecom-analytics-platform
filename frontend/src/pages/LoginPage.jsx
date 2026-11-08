@@ -19,7 +19,7 @@ function LoginPage() {
           Telecom Analytics Dashboard
         </h1>
         <p className="text-gray-400 text-center mb-8">
-          Sign in to to view the dashboard
+          Sign in to view the dashboard
         </p>
 
         {error && (
